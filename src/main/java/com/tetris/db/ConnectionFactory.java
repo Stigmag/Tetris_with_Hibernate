@@ -1,7 +1,13 @@
 package com.tetris.db;
 
 import lombok.SneakyThrows;
+import org.apache.ibatis.jdbc.ScriptRunner;
 
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,7 +15,7 @@ import java.sql.SQLException;
 public class ConnectionFactory {
     private static final String DB_URL = "jdbc:postgresql://localhost:5432/tetris";
     private static final String USER_NAME = "postgres";
-    private static final String PASSWORD = "postgres";
+    private static final String PASSWORD = "maximum ride";
 
     static {
         try {
@@ -17,6 +23,24 @@ public class ConnectionFactory {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    static {
+        try {
+
+            ScriptRunner sr = new ScriptRunner(getConnection());
+            //Creating a reader object
+
+            Reader reader = new BufferedReader(new FileReader("C:\\Users\\Kate\\Desktop\\tetris_ver_89\\src\\main\\resources\\db\\init.sql"));
+            //Running the script
+            sr.runScript(reader);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+
     }
 
     @SneakyThrows

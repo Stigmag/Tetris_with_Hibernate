@@ -4,10 +4,12 @@ import com.tetris.builder.FigureBuilder;
 import com.tetris.game.handler.MoveEvent;
 import com.tetris.model.GameState;
 import com.tetris.model.Point;
+import com.tetris.parse.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.tetris.game.handler.MoveEvent.MOVE_DOWN;
@@ -31,6 +33,7 @@ public class Board {
     }
 
     public GameState doGame(MoveEvent moveEvent) {
+System.out.println(getStringState());
         Figure nextFigure = activeFigure.getNewFigureByMoveEventType(moveEvent);
         boolean isInvalidMove = !isValidFigureCoordinatesWithinBoard(nextFigure) || !isFigureNotTouchFillPoints(nextFigure);
         if (isInvalidMove && moveEvent == MOVE_DOWN) {

@@ -2,6 +2,7 @@ package com.tetris.game;
 
 import com.tetris.game.handler.MoveEvent;
 import com.tetris.model.Point;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +17,12 @@ import static com.tetris.game.handler.MoveEvent.RIGHT_ROTATE;
 @Data
 @Builder
 @Slf4j
+@AllArgsConstructor
 public class Figure {
 
-    private final List<Point> points;
-    private final Point pivot;
-    private final Point currentCoordinateOnBoard;
+   public final List<Point> points;
+    public final Point pivot;
+    public final Point currentCoordinateOnBoard;
 
 
     public Figure getNewFigureByMoveEventType(MoveEvent eventType) {
