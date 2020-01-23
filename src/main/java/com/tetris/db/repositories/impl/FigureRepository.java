@@ -1,8 +1,13 @@
 package com.tetris.db.repositories.impl;
 
+import com.tetris.db.repositories.HibernateUtil;
 import com.tetris.db.repositories.Repository;
+import com.tetris.db.repositories.hibernateTable.FigureTable;
+import com.tetris.db.repositories.hibernateTable.FigureTypeTable;
 import com.tetris.game.Figure;
 import com.tetris.game.handler.MoveEvent;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,27 +15,27 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class FigureRepository implements Repository {
+public class FigureRepository extends HibernateUtil {
 FigureTypeRepository repository= new FigureTypeRepository();
     public void saveNewFigure(int gameId, int figureId) {
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO FIGURE(GAME_ID,FIGURE_ID) VALUES(?,?)")) {
-            {
-                try {
-                    int i = 0;
-                    statement.setInt(++i, gameId);
-                    statement.setInt(++i, figureId);
+        FigureTable figure= new FigureTable(figureId,gameId);
+        Transaction transaction = null;
 
-                    statement.execute();
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+        try (Session session = getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            // save the student objects
+            session.save(figure);
+            // commit transaction
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
+
 
 
     }
@@ -39,26 +44,26 @@ FigureTypeRepository repository= new FigureTypeRepository();
 
         List<Figure> resultList = new ArrayList<>();
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM FIGURE WHERE GAME_ID= ? ")) {
-
-            statement.setInt(1, gameId);
 
 
-            ResultSet result2 = statement.executeQuery();
+        Transaction transaction = null;
 
-            while (result2.next()) {
-                Set<Figure> currentfigure=repository.getFigures(result2.getInt("FIGURE_ID"));
-
-           resultList.addAll(currentfigure) ;
-
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-
-
-            // return result.stream().distinct().collect(Collectors.toList());
+        try (Session session = getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            // save the student objects
+           FigureTable currentfigure=session.load(FigureTable.class,gameId);
+            Set<Figure> figureSet=repository.getFigures(currentfigure.getFigureId());
+            resultList.addAll(figureSet) ;
         }
+        catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+
+
         return resultList;
 
     }

@@ -1,7 +1,6 @@
 package com.tetris.builder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+
 import com.tetris.db.repositories.impl.FigureRepository;
 import com.tetris.game.Figure;
 import com.tetris.model.Point;

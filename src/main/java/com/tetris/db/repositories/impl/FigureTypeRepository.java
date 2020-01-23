@@ -1,10 +1,14 @@
 package com.tetris.db.repositories.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.tetris.db.repositories.HibernateUtil;
 import com.tetris.db.repositories.Repository;
+import com.tetris.db.repositories.hibernateTable.FigureTypeTable;
 import com.tetris.game.Figure;
 import com.tetris.model.Point;
 import com.tetris.parse.JsonParser;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,53 +21,58 @@ import java.util.Set;
 
 import static com.tetris.db.ConnectionFactory.getConnection;
 
-public class FigureTypeRepository implements Repository {
+public class FigureTypeRepository extends HibernateUtil {
+
     public void saveNewFigureType(int figureId, String figure) {
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO FIGURE_TYPE(FIGURE_ID,COORDINATE) VALUES(?,?)")) {
-            {
+        FigureTypeTable figureType= new FigureTypeTable(figureId,figure);
+        Transaction transaction = null;
 
-                try {
-                    int i = 0;
-                    statement.setInt(++i, figureId);
-                    statement.setString(++i, figure);
-
-                    statement.execute();
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+        try (Session session = getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            // save the student objects
+            session.save(figureType);
+            // commit transaction
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
+
 
     }
 
 
     public Set<Figure> getFigures(int figureId) {
-        Set<Figure> listofFigure = new HashSet<Figure>();
+        Set<Figure> listOfFigure = new HashSet<Figure>();
+        FigureTypeTable figure=null;
 
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM FIGURE_TYPE WHERE FIGURE_ID= ? ")) {
+        Transaction transaction = null;
 
-            statement.setInt(1, figureId);
+        try (Session session = getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            // save the student objects
+           figure=(FigureTypeTable) session.load(FigureTypeTable.class,figureId);
 
-
-            ResultSet result2 = statement.executeQuery();
-
-            while (result2.next()) {
-                listofFigure.add(JsonParser.parseToFigure(result2.getString("COORDINATE")));
+            listOfFigure.add(JsonParser.parseToFigure(figure.getFigure()));
+        }
+        catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
             }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-
-
-            // return result.stream().distinct().collect(Collectors.toList());
+            e.printStackTrace();
         }
 
-        return listofFigure;
+
+
+
+
+
+
+        return listOfFigure;
     }
 
 
