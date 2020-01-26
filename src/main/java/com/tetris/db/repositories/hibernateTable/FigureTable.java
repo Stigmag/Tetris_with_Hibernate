@@ -1,28 +1,54 @@
 package com.tetris.db.repositories.hibernateTable;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
+@Entity
 @Table(name = "Figure_Table")
 public class FigureTable {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_Figure")
-    private int figureId;
-    @Column(name = "id_Game")
-    private int gameId;
+    @GenericGenerator(name="increment",strategy = "increment")
+    @Column(name = "id")
+    private int id;
 
-    public FigureTable(int figureId, int gameId) {
+    @OneToOne (optional=false, cascade=CascadeType.ALL)
+    @JoinColumn (name="id")
+    private FigureTypeTable figureId;
+
+    @ManyToOne (optional=false, cascade=CascadeType.ALL)
+    @JoinColumn (name="id_Game")
+    private GameTable gameId;
+
+    public FigureTable() {
+
+    }
+
+    public FigureTable(FigureTypeTable figureId, GameTable gameId) {
         this.figureId = figureId;
         this.gameId = gameId;
     }
 
-    public int getFigureId() {
+    public int getId() {
+        return id;
+    }
+
+    public FigureTypeTable getFigureId() {
         return figureId;
     }
 
-    public int getGameId() {
+    public GameTable getGameId() {
         return gameId;
+    }
+
+    public void setFigureId(FigureTypeTable figureId) {
+        this.figureId = figureId;
+    }
+
+    public void setGameId(GameTable gameId) {
+        this.gameId = gameId;
     }
 }

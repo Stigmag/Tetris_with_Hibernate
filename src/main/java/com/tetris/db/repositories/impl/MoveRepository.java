@@ -1,22 +1,16 @@
 package com.tetris.db.repositories.impl;
 
 import com.tetris.db.repositories.HibernateUtil;
-import com.tetris.db.repositories.Repository;
-import com.tetris.db.repositories.hibernateTable.GameTable;
 import com.tetris.db.repositories.hibernateTable.MoveTable;
 import com.tetris.game.handler.MoveEvent;
-import com.tetris.model.GameState;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 public class MoveRepository extends HibernateUtil {
 
-    public void sameNewMoveEvent(int gameId, MoveEvent event) {
-        MoveTable moveEvent = new MoveTable(gameId, event);
+    public void sameNewMoveEvent(MoveEvent event) {
+        int k=0;
+        MoveTable moveEvent = new MoveTable(k++, event);
 
         Transaction transaction = null;
 

@@ -2,6 +2,7 @@ package com.tetris.db.repositories.impl;
 
 import com.tetris.db.repositories.HibernateUtil;
 
+import com.tetris.db.repositories.hibernateTable.FigureTypeTable;
 import com.tetris.db.repositories.hibernateTable.GameTable;
 import com.tetris.game.Figure;
 import com.tetris.model.GameState;
@@ -26,13 +27,13 @@ public class GameRepository extends HibernateUtil
         return Optional.empty();
     }
 
+    public GameTable game;
 
-
-int number=9;
+    int number=9;
     public int createNewGame() {
         int gameId=number++;
        addAllTypeFigure(new Point(15 / 2, 0));
-        GameTable game = new GameTable(gameId,GameState.ACTIVE.toString());
+         game = new GameTable(gameId,GameState.ACTIVE);
 
         Transaction transaction = null;
 
@@ -58,6 +59,8 @@ int number=9;
 
 
     }
+    FigureTypeTable figureType= null;
+
     public  void addAllTypeFigure(Point boardStartPoint)
     {
         List<Point> points= new LinkedList<>();

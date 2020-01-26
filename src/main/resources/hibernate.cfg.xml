@@ -8,16 +8,22 @@
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/Tetris_Hibernate</property>
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">maximum ride</property>
-        <property name="hibernate.connection.pool_size">1</property>
+        <property name="hibernate.connection.pool_size">100</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</property>
+        <property name="hbm2ddl.auto">create-drop</property>
+        <!-- dbcp connection pool configuration -->
+        <property name="hibernate.dbcp.initialSize">5</property>
+        <property name="hibernate.dbcp.maxTotal">20</property>
+        <property name="hibernate.dbcp.maxIdle">10</property>
+        <property name="hibernate.dbcp.minIdle">5</property>
+        <property name="hibernate.dbcp.maxWaitMillis">-1</property>
 
-        <mapping resource="tetris.hbm.xml" />
-        <mapping package="com.tetris"/>
-        <mapping class="entity.FigureTable" />
-        <mapping class="entity.FigureTypeTable" />
-        <mapping class="entity.GameTable" />
-        <mapping class="entity.MoveTable" />
+<mapping package="com.tetris.db.repositories.impl"/>
+
+        <mapping class="com.tetris.db.repositories.hibernateTable.FigureTypeTable" />
+        <mapping class="com.tetris.db.repositories.hibernateTable.GameTable" />
+        <mapping class="com.tetris.db.repositories.hibernateTable.MoveTable" />
     </session-factory>
 </hibernate-configuration>

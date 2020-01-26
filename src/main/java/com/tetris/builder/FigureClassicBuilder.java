@@ -29,7 +29,7 @@ public class FigureClassicBuilder extends AbstractFigureBuilder {
 int k=0;
 
 
-        repository.saveNewFigure(getGameId(),k++ );
+
         listfigure=repository.getFiguresByGameId(getGameId());
 
        return(listfigure.get(new Random().nextInt(listfigure.size())));

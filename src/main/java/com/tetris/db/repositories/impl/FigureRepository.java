@@ -1,25 +1,25 @@
 package com.tetris.db.repositories.impl;
 
 import com.tetris.db.repositories.HibernateUtil;
-import com.tetris.db.repositories.Repository;
 import com.tetris.db.repositories.hibernateTable.FigureTable;
 import com.tetris.db.repositories.hibernateTable.FigureTypeTable;
+import com.tetris.db.repositories.hibernateTable.GameTable;
 import com.tetris.game.Figure;
-import com.tetris.game.handler.MoveEvent;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import javax.persistence.Query;
+import java.util.*;
 
 public class FigureRepository extends HibernateUtil {
 FigureTypeRepository repository= new FigureTypeRepository();
-    public void saveNewFigure(int gameId, int figureId) {
 
-        FigureTable figure= new FigureTable(figureId,gameId);
+
+    public void saveNewFigure(GameTable game) {
+
+        FigureTypeTable figure= new FigureTypeTable();
+        figure.getGames().add(game);
+
         Transaction transaction = null;
 
         try (Session session = getSessionFactory().openSession()) {
@@ -43,8 +43,8 @@ FigureTypeRepository repository= new FigureTypeRepository();
     public List<Figure> getFiguresByGameId(int gameId) {
 
         List<Figure> resultList = new ArrayList<>();
-
-
+        FigureTypeTable currentfigure= new FigureTypeTable();
+        Set<Figure> figureSet= null;
 
         Transaction transaction = null;
 
@@ -52,13 +52,21 @@ FigureTypeRepository repository= new FigureTypeRepository();
             // start a transaction
             transaction = session.beginTransaction();
             // save the student objects
-           FigureTable currentfigure=session.load(FigureTable.class,gameId);
-            Set<Figure> figureSet=repository.getFigures(currentfigure.getFigureId());
+
+            Query query = session.createQuery("from FigureTypeTable where id_Game = :paramName");
+            query.setParameter("paramName", currentfigure.getGames());
+            List<FigureTypeTable> list= ((org.hibernate.query.Query) query).list();
+        // currentfigure=(FigureTable) session.load(FigureTable.class,gameId);
+            for (FigureTypeTable figure: list
+                 ) { figureSet=repository.getFigures(figure.getFigureTypeId());
+
+            }
+
             resultList.addAll(figureSet) ;
         }
         catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();
+          // transaction.rollback();
             }
             e.printStackTrace();
         }
