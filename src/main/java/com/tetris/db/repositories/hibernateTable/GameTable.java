@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Table
 @Data
 
-public class GameTable {
+public class GameTable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "game_id")
@@ -30,7 +31,7 @@ public class GameTable {
             joinColumns = {@JoinColumn(name = "game_id")},
             inverseJoinColumns = {@JoinColumn(name = "figure_type_id")}
     )
-    private List<FigureTypeTable> figures;
+  public List<FigureTypeTable> figures;
 
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -40,6 +41,9 @@ public class GameTable {
     public GameTable(int gameId, GameState state) {
         this.gameId = gameId;
         this.state = state;
+    }
+
+    public GameTable() {
     }
 
     public void setGameId(int gameId) {
@@ -56,5 +60,15 @@ public class GameTable {
 
     public void setMoves(List<MoveTable> moves) {
         this.moves = moves;
+    }
+
+    @Override
+    public final String toString() {
+        return "GameTable{" +
+                "gameId=" + gameId +
+                ", state=" + state +
+                ", figures=" + figures +
+                ", moves=" + moves +
+                '}';
     }
 }

@@ -1,5 +1,8 @@
 package com.tetris.db.repositories.hibernateTable;
 
+import com.tetris.db.repositories.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.annotations.GenericGenerator;
 
 
@@ -28,7 +31,7 @@ public class FigureTypeTable {
             joinColumns = {@JoinColumn(name = "figure_type_id")},
             inverseJoinColumns = {@JoinColumn(name = "game_id")}
     )
-    private List<GameTable> games;
+    public List<GameTable> games;
 
     public FigureTypeTable(int figureTypeId, String figureStructure) {
         this.figureTypeId = figureTypeId;
@@ -52,6 +55,7 @@ public class FigureTypeTable {
     }
 
     public List<GameTable> getGames() {
+
         return games;
     }
 

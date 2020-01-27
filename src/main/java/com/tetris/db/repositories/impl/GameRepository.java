@@ -32,8 +32,9 @@ public class GameRepository extends HibernateUtil
     int number=9;
     public int createNewGame() {
         int gameId=number++;
-       addAllTypeFigure(new Point(15 / 2, 0));
-         game = new GameTable(gameId,GameState.ACTIVE);
+        game = new GameTable(gameId,GameState.ACTIVE);
+
+
 
         Transaction transaction = null;
 
@@ -51,6 +52,7 @@ public class GameRepository extends HibernateUtil
             e.printStackTrace();
         }
 
+        addAllTypeFigure(new Point(15 / 2, 0),game);
 
         return gameId;
     }
@@ -61,7 +63,7 @@ public class GameRepository extends HibernateUtil
     }
     FigureTypeTable figureType= null;
 
-    public  void addAllTypeFigure(Point boardStartPoint)
+    public  void addAllTypeFigure(Point boardStartPoint,GameTable game)
     {
         List<Point> points= new LinkedList<>();
         points.add(new Point(0,0));
@@ -79,12 +81,57 @@ public class GameRepository extends HibernateUtil
         listfigure.add(figure);
         listfigure.add(figure2);
         int i=0;
+        List<FigureTypeTable> list= new LinkedList<>();
+        List<GameTable> gameList= new LinkedList<>();
         for (Figure f:listfigure)
         {
 
-           repository.saveNewFigureType(i++, JsonParser.parseToJson(f) );
+          FigureTypeTable curentFigure= repository.saveNewFigureType(i++, JsonParser.parseToJson(f));
+
+
+         Transaction transaction = null;
+
+            try (Session session = getSessionFactory().openSession()) {
+
+                transaction = session.beginTransaction();
+
+
+
+                session.save(game);
+                list.add(curentFigure);
+
+                try{
+
+
+                    game.setFigures(list);
+                    session.save(game);
+
+
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                finally {
+                    session.getSessionFactory().getCurrentSession();
+                }
+
+                transaction.commit();
+
+
+
+            } catch (Exception e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                e.printStackTrace();
+            }
 
         }
+        }
+
+
+
     }
 
-}
+

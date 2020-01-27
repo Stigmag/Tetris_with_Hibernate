@@ -1,6 +1,7 @@
 package com.tetris.builder;
 
 
+import com.tetris.db.repositories.hibernateTable.GameTable;
 import com.tetris.db.repositories.impl.FigureRepository;
 import com.tetris.game.Figure;
 import com.tetris.model.Point;
@@ -29,7 +30,7 @@ public class FigureClassicBuilder extends AbstractFigureBuilder {
 int k=0;
 
 
-
+      //  repository.saveNewFigure(new GameTable(gameRepository.game.getGameId(),gameRepository.game.getState()));
         listfigure=repository.getFiguresByGameId(getGameId());
 
        return(listfigure.get(new Random().nextInt(listfigure.size())));

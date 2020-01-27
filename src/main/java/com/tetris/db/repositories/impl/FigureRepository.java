@@ -15,7 +15,7 @@ public class FigureRepository extends HibernateUtil {
 FigureTypeRepository repository= new FigureTypeRepository();
 
 
-    public void saveNewFigure(GameTable game) {
+  /*  public void saveNewFigure(GameTable game) {
 
         FigureTypeTable figure= new FigureTypeTable();
         figure.getGames().add(game);
@@ -38,14 +38,13 @@ FigureTypeRepository repository= new FigureTypeRepository();
 
 
 
-    }
+    }*/
 
     public List<Figure> getFiguresByGameId(int gameId) {
 
         List<Figure> resultList = new ArrayList<>();
         FigureTypeTable currentfigure= new FigureTypeTable();
         Set<Figure> figureSet= null;
-
         Transaction transaction = null;
 
         try (Session session = getSessionFactory().openSession()) {
@@ -53,8 +52,8 @@ FigureTypeRepository repository= new FigureTypeRepository();
             transaction = session.beginTransaction();
             // save the student objects
 
-            Query query = session.createQuery("from FigureTypeTable where id_Game = :paramName");
-            query.setParameter("paramName", currentfigure.getGames());
+            Query query = session.createQuery("from FigureTypeTable rl join Figure arc arc.game_id = :paramName and arc.figure_type_id = rl.figure_type_id");
+            query.setParameter("paramName",gameId);
             List<FigureTypeTable> list= ((org.hibernate.query.Query) query).list();
         // currentfigure=(FigureTable) session.load(FigureTable.class,gameId);
             for (FigureTypeTable figure: list
