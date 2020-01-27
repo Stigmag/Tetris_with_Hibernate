@@ -38,21 +38,7 @@ public class FigureTypeRepository extends HibernateUtil {
               session.save(figureType);
 
 
-/*try{
-    list.add(game);
 
-    figureType.setGames(list);
-session.save(figureType);
-
-
-}
-catch (Exception e)
-{
-    e.printStackTrace();
-}
-finally {
-   session.getSessionFactory().getCurrentSession();
-}*/
 
                transaction.commit();
 
@@ -80,7 +66,7 @@ return figureType;
         try (Session session = getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
-            Query query = session.createQuery("from FigureTypeTable where id_Figure = :paramName");
+            Query query = session.createQuery("from FigureTypeTable where figureTypeId= :paramName ");
             query.setParameter("paramName", figureId);
             List<FigureTypeTable> list = ((org.hibernate.query.Query) query).list();
             // save the student objects

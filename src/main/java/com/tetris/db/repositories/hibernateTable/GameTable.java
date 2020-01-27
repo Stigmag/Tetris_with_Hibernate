@@ -5,6 +5,7 @@ package com.tetris.db.repositories.hibernateTable;
 import com.tetris.model.GameState;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Table
 @Data
-
+@ToString(exclude = {"figures"})
 public class GameTable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,25 +26,29 @@ public class GameTable implements Serializable {
     @Enumerated(EnumType.STRING)
     private GameState state;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(
             name = "figure",
             joinColumns = {@JoinColumn(name = "game_id")},
             inverseJoinColumns = {@JoinColumn(name = "figure_type_id")}
     )
-  public List<FigureTypeTable> figures;
+  private List<FigureTypeTable> figures;
 
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MoveTable> moves;
 
 
-    public GameTable(int gameId, GameState state) {
-        this.gameId = gameId;
+    public GameTable( GameState state) {
+
         this.state = state;
     }
 
     public GameTable() {
+    }
+
+    public int getGameId() {
+        return gameId;
     }
 
     public void setGameId(int gameId) {

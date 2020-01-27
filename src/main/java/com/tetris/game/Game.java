@@ -1,5 +1,6 @@
 package com.tetris.game;
 
+import com.tetris.db.repositories.HibernateUtil;
 import com.tetris.db.repositories.impl.MoveRepository;
 import com.tetris.game.handler.MoveEvent;
 import com.tetris.game.handler.MoveHandler;
@@ -17,6 +18,7 @@ public class Game {
     public void start() {
         GameState state = ACTIVE;
         while (state == ACTIVE) {
+
             state = board.doGame(moveHandler.getNewMoveEvent());
         }
     }

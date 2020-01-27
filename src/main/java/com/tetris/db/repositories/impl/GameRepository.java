@@ -4,7 +4,9 @@ import com.tetris.db.repositories.HibernateUtil;
 
 import com.tetris.db.repositories.hibernateTable.FigureTypeTable;
 import com.tetris.db.repositories.hibernateTable.GameTable;
+import com.tetris.db.repositories.hibernateTable.MoveTable;
 import com.tetris.game.Figure;
+import com.tetris.game.handler.MoveEvent;
 import com.tetris.model.GameState;
 import com.tetris.model.Point;
 import com.tetris.parse.JsonParser;
@@ -12,6 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 
+import javax.persistence.Query;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,7 @@ import java.util.Optional;
 public class GameRepository extends HibernateUtil
 {
     FigureTypeRepository repository= new FigureTypeRepository();
+MoveRepository moveRepository= new MoveRepository();
 
 
     public Optional<Integer> getActiveGameId() {
@@ -28,11 +32,11 @@ public class GameRepository extends HibernateUtil
     }
 
     public GameTable game;
+  public  GameTable k;
 
-    int number=9;
     public int createNewGame() {
-        int gameId=number++;
-        game = new GameTable(gameId,GameState.ACTIVE);
+      //  int gameId=number++;
+        game = new GameTable(GameState.ACTIVE);
 
 
 
@@ -54,13 +58,30 @@ public class GameRepository extends HibernateUtil
 
         addAllTypeFigure(new Point(15 / 2, 0),game);
 
-        return gameId;
+        return game.getGameId();
     }
 
     public void finishGame(int gameId) {
 
 
     }
+
+
+
+
+    public void  setEvent( MoveEvent event)
+
+    {
+
+
+        moveRepository.sameNewMoveEvent(k,event);
+
+
+
+
+    }
+
+
     FigureTypeTable figureType= null;
 
     public  void addAllTypeFigure(Point boardStartPoint,GameTable game)
@@ -82,7 +103,7 @@ public class GameRepository extends HibernateUtil
         listfigure.add(figure2);
         int i=0;
         List<FigureTypeTable> list= new LinkedList<>();
-        List<GameTable> gameList= new LinkedList<>();
+
         for (Figure f:listfigure)
         {
 
@@ -97,7 +118,7 @@ public class GameRepository extends HibernateUtil
 
 
 
-                session.save(game);
+
                 list.add(curentFigure);
 
                 try{
@@ -129,6 +150,7 @@ public class GameRepository extends HibernateUtil
 
         }
         }
+
 
 
 

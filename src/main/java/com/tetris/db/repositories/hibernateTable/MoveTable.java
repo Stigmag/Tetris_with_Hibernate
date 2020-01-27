@@ -24,10 +24,31 @@ public class MoveTable {
     @JoinColumn(name = "game_id", nullable = false, unique = true)
     private GameTable game;
 
-    public MoveTable(int moveId, MoveEvent moveEventType) {
+    public MoveTable( MoveEvent moveEventType) {
 
-        this.moveId = moveId;
+
         this.moveEventType = moveEventType;
+    }
+
+    public MoveTable(MoveEvent moveEventType, GameTable game) {
+        this.moveEventType = moveEventType;
+        this.game = game;
+    }
+
+    public int getMoveId() {
+        return moveId;
+    }
+
+    public MoveEvent getMoveEventType() {
+        return moveEventType;
+    }
+
+    public GameTable getGame() {
+        return game;
+    }
+
+    public void setGame(GameTable game) {
+        this.game = game;
     }
 }
 

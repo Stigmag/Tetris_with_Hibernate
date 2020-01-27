@@ -7,6 +7,7 @@ import com.tetris.db.repositories.hibernateTable.GameTable;
 import com.tetris.game.Figure;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -46,18 +47,32 @@ FigureTypeRepository repository= new FigureTypeRepository();
         FigureTypeTable currentfigure= new FigureTypeTable();
         Set<Figure> figureSet= null;
         Transaction transaction = null;
+        List<FigureTypeTable> list= new LinkedList<>();
+        String n;
 
         try (Session session = getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             // save the student objects
 
-            Query query = session.createQuery("from FigureTypeTable rl join Figure arc arc.game_id = :paramName and arc.figure_type_id = rl.figure_type_id");
-            query.setParameter("paramName",gameId);
-            List<FigureTypeTable> list= ((org.hibernate.query.Query) query).list();
+          Query query = session.createQuery(" from FigureTypeTable rl  join rl.games ");
+
+            List<Object> result = (List<Object>) ((org.hibernate.query.Query) query).list();
+            Iterator itr = result.iterator();
+            while(itr.hasNext()){
+                Object[] obj = (Object[]) itr.next();
+                //now you have one array of Object for each row
+                FigureTypeTable figure =(FigureTypeTable)obj[0] ;
+                // don't know the type of column CLIENT assuming String
+               list.add(figure);
+            }
+
+
+
         // currentfigure=(FigureTable) session.load(FigureTable.class,gameId);
-            for (FigureTypeTable figure: list
-                 ) { figureSet=repository.getFigures(figure.getFigureTypeId());
+
+            for (FigureTypeTable k: list
+                 ) { figureSet=repository.getFigures(k.getFigureTypeId());
 
             }
 
