@@ -2,7 +2,6 @@ package com.tetris.game.handler.user;
 
 import com.tetris.db.repositories.impl.GameRepository;
 import com.tetris.db.repositories.impl.MoveRepository;
-import com.tetris.game.Game;
 import com.tetris.game.handler.MoveEvent;
 import com.tetris.game.handler.MoveHandler;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,7 @@ public class UserMoveHandler implements MoveHandler {
     private final int gameId;
     private final PlayerMoveEventPool moveEventPool = new PlayerMoveEventPool();
 
-    MoveRepository moveRepository= new MoveRepository();
+    private final MoveRepository moveRepository = new MoveRepository();
 
     @Override
     public MoveEvent getNewMoveEvent() {
@@ -23,7 +22,7 @@ public class UserMoveHandler implements MoveHandler {
         do {
             event = moveEventPool.pool.get(scanner.nextLine());
 
-            moveRepository.sameNewMoveEvent(event);
+            moveRepository.sameNewMoveEvent(gameId,event);
         } while (event == null);
         return event;
     }

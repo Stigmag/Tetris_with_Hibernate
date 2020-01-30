@@ -3,13 +3,15 @@ package com.tetris.db.repositories.hibernateTable;
 import com.tetris.game.handler.MoveEvent;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 
 @Entity
-@Table
+@Table(name="Move_table")
 @Data
+
 public class MoveTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,13 +21,14 @@ public class MoveTable {
     @Column(name = "move_event_type")
     @Enumerated(EnumType.STRING)
     private MoveEvent moveEventType;
-
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "game_id", nullable = false, unique = true)
+    @JoinColumn(name = "game_id", nullable = false)
     private GameTable game;
 
-    public MoveTable( MoveEvent moveEventType) {
+    public MoveTable(GameTable game, MoveEvent moveEventType) {
 
+this.game=game;
 
         this.moveEventType = moveEventType;
     }
@@ -34,6 +37,12 @@ public class MoveTable {
         this.moveEventType = moveEventType;
         this.game = game;
     }
+    public MoveTable() {
+
+
+
+    }
+
 
     public int getMoveId() {
         return moveId;

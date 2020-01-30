@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.tetris.game.handler.MoveEvent.MOVE_DOWN;
-import static com.tetris.model.GameState.ACTIVE;
+import static com.tetris.model.GameState.*;
 
 @Slf4j
 public class Board {
@@ -33,7 +33,9 @@ public class Board {
     }
 
     public GameState doGame(MoveEvent moveEvent) {
-System.out.println(getStringState());
+        log.info(getStringState());
+        if(moveEvent== null)
+        {return STOP;}
         Figure nextFigure = activeFigure.getNewFigureByMoveEventType(moveEvent);
         boolean isInvalidMove = !isValidFigureCoordinatesWithinBoard(nextFigure) || !isFigureNotTouchFillPoints(nextFigure);
         if (isInvalidMove && moveEvent == MOVE_DOWN) {
@@ -43,6 +45,7 @@ System.out.println(getStringState());
             log.debug("Change figure state on the board. New state {}", activeFigure);
             return ACTIVE;
         }
+
         if (isInvalidMove) {
             return ACTIVE;
         }
@@ -67,6 +70,10 @@ System.out.println(getStringState());
 
     public String getStringState() {
         char[][] charBoard = new char[height][width];
+        for (char[] chars : charBoard) {
+            Arrays.fill(chars,' ');
+        }
+
         fillPoints.forEach(point -> charBoard[point.getY()][point.getX()] = '#');
         activeFigure.getPointsByBoardCoordinates().forEach(point -> charBoard[point.getY()][point.getX()] = 'X');
         StringBuilder builder = new StringBuilder();

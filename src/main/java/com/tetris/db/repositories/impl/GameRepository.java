@@ -25,14 +25,35 @@ public class GameRepository extends HibernateUtil
     FigureTypeRepository repository= new FigureTypeRepository();
 MoveRepository moveRepository= new MoveRepository();
 
+GameTable currecntGame=null;
 
     public Optional<Integer> getActiveGameId() {
+        Transaction transaction = null;
+        try (Session session = getSessionFactory().openSession()) {
 
-        return Optional.empty();
+            transaction = session.beginTransaction();
+
+            currecntGame = session.byId(GameTable.class).getReference(3);
+
+
+
+        // commit transaction
+        transaction.commit();
+    } catch (Exception e) {
+            if (transaction != null) {
+
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+
+        return Optional.of(currecntGame.getGameId());
+       //return Optional.empty();
     }
 
+
     public GameTable game;
-  public  GameTable k;
+
 
     public int createNewGame() {
       //  int gameId=number++;
@@ -69,17 +90,7 @@ MoveRepository moveRepository= new MoveRepository();
 
 
 
-    public void  setEvent( MoveEvent event)
 
-    {
-
-
-        moveRepository.sameNewMoveEvent(k,event);
-
-
-
-
-    }
 
 
     FigureTypeTable figureType= null;
@@ -97,7 +108,9 @@ MoveRepository moveRepository= new MoveRepository();
         points.add(new Point(1,0));
         points.add(new Point(2,0));
         points.add(new Point(1,1));
+
         Figure figure2= new Figure(points,new Point(0,0),boardStartPoint);
+
         List<Figure> listfigure= new LinkedList<>();
         listfigure.add(figure);
         listfigure.add(figure2);

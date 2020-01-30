@@ -4,5 +4,6 @@ import java.util.Optional;
 
 public interface MoveHandler {
 
+
     MoveEvent getNewMoveEvent();
 }

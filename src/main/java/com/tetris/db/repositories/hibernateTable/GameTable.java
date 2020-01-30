@@ -13,9 +13,11 @@ import java.util.List;
 
 
 @Entity
-@Table
-@Data
-@ToString(exclude = {"figures"})
+@Table(name="Game_table")
+
+@ToString(exclude = {"figures","game"})
+
+@PersistenceContext(type=PersistenceContextType.EXTENDED)
 public class GameTable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +36,7 @@ public class GameTable implements Serializable {
     )
   private List<FigureTypeTable> figures;
 
-
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MoveTable> moves;
 
 
@@ -49,6 +50,10 @@ public class GameTable implements Serializable {
 
     public int getGameId() {
         return gameId;
+    }
+
+    public List<MoveTable> getMoves() {
+        return moves;
     }
 
     public void setGameId(int gameId) {
@@ -67,13 +72,5 @@ public class GameTable implements Serializable {
         this.moves = moves;
     }
 
-    @Override
-    public final String toString() {
-        return "GameTable{" +
-                "gameId=" + gameId +
-                ", state=" + state +
-                ", figures=" + figures +
-                ", moves=" + moves +
-                '}';
-    }
+
 }

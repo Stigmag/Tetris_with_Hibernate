@@ -4,6 +4,8 @@ import com.tetris.builder.FigureBuilderFactory;
 import com.tetris.db.repositories.impl.GameRepository;
 import com.tetris.game.handler.db.DbMoveHandler;
 import com.tetris.game.handler.user.UserMoveHandler;
+import com.tetris.observer.GameObserver;
+import com.tetris.observer.MoveEventObserver;
 
 import java.util.Optional;
 
@@ -15,13 +17,19 @@ public class GameBuilder {
     private static final GameRepository gameRepository = new GameRepository();
 
     public static Game build() {
-        Optional<Integer> activeGameId = gameRepository.getActiveGameId();
+        Optional<Integer> activeGameId =  gameRepository.getActiveGameId();
         return activeGameId.map(GameBuilder::restoreGame).orElseGet(GameBuilder::buildNewGame);
     }
 
     private static Game restoreGame(int id) {
+        DbMoveHandler   handler=  new DbMoveHandler(id);
+        new MoveEventObserver(handler);
+
         Board board = new Board(HEIGHT, WIDTH, new FigureBuilderFactory().getRestoreBuilder(id));
-        return new Game(new DbMoveHandler(id), board);
+        Game game= new Game(handler, board);
+        new GameObserver(game);
+        return game;
+
     }
 
     private static Game buildNewGame() {
